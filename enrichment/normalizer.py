@@ -46,6 +46,8 @@ def parse_virus_total(response: Dict, json_to_parse: Dict) -> Dict | None:
             json_to_parse.get("verdict").update({"score": indicator_score})
             indicator_reputation = set_reputation(score = indicator_score)
             json_to_parse.get("verdict").update({"reputation": indicator_reputation})
+        
+        json_to_parse.get("verdict").update({"confidence": "high"})
             
     if response.get('meta'):
         if response.get('meta').get('file_info'):
@@ -66,6 +68,48 @@ def parse_virus_total(response: Dict, json_to_parse: Dict) -> Dict | None:
     return json_to_parse   
 
 
+def parse_abuse_ipdb(response: Dict, json_to_parse: Dict) -> Dict | None:
+    if response.get('data'):
+        attributes = response.get('data')
+
+        if attributes.get('countryCode'):
+            indicator_country = attributes.get('countryCode')
+            json_to_parse.get("info").update({"geo": indicator_country})
+            
+        if attributes.get('isp'):
+            indicator_isp = attributes.get('isp')
+            json_to_parse.get("info").update({"isp": indicator_isp})
+        
+        if attributes.get('totalReports'):
+            indicator_reports = attributes.get('totalReports')
+            json_to_parse.get("info").update({"total_reports": indicator_reports})
+        
+        if attributes.get('isTor'):
+            if attributes.get('isTor') != 'False':
+                indicator_tor = attributes.get('isTor')
+                json_to_parse.get("info").update({"Tor": indicator_tor})
+
+        if attributes.get('lastReportedAt'):
+            indicator_last_analysis_date = attributes.get('lastReportedAt')
+            json_to_parse.get("metadata").update({"last_report": indicator_last_analysis_date})
+
+        if attributes.get('abuseConfidenceScore'):
+            indicator_stats = attributes.get('abuseConfidenceScore')
+                
+            if indicator_stats:
+                indicator_score = set_score(analysis = indicator_stats)
+                json_to_parse.get("verdict").update({"score": indicator_score})
+                indicator_reputation = set_reputation(score = indicator_score)
+                json_to_parse.get("verdict").update({"reputation": indicator_reputation})
+            
+        json_to_parse.get("verdict").update({"confidence": "high"})
+            
+    if len(json_to_parse.get("info")) == 0:
+        json_to_parse.pop("info")
+    
+    return json_to_parse
+
+
 def parse_response(response: Dict, indicator: str, type: str, source: str) -> Dict | None:
     try:
         if response and indicator and type and source:
@@ -83,21 +127,37 @@ def parse_response(response: Dict, indicator: str, type: str, source: str) -> Di
             
             if source == 'VirusTotal':
                 return parse_virus_total(response=response, json_to_parse=json_to_parse)
+
+            elif source == 'AbuseIPDB':
+                return parse_abuse_ipdb(response=response, json_to_parse=json_to_parse)
         
     except Exception as e:
         print(f"ERROR: {e}.")
 
 
-def set_score(analysis: Dict) -> None | int:
+def set_score(analysis: dict | int) -> None | int:
     try:
         indicator_score = 0
 
-        if analysis.get('malicious') > 0:
-            indicator_score = 3        
-        elif analysis.get('suspicious') > 0:
-            indicator_score = 2    
-        elif analysis.get('harmless') > 0:
-            indicator_score = 1
+        if isinstance(analysis, dict):
+            if analysis.get('malicious') > 0:
+                indicator_score = 3
+
+            elif analysis.get('suspicious') > 0:
+                indicator_score = 2
+
+            elif analysis.get('harmless') > 0:
+                indicator_score = 1
+        
+        elif isinstance(analysis, int):
+            if analysis > 50:
+                indicator_score = 3
+
+            elif 50 >= analysis <= 1 :
+                indicator_score = 2
+
+            elif analysis == 0:
+                indicator_score = 1
 
         return indicator_score
     

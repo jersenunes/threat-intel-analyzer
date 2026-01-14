@@ -2,6 +2,7 @@ from configs.settings import *
 from enrichment.providers.virus_total import VirusTotal
 from typing import List
 
+
 def check_file(indicators: str | Path | List[Path], providers:List = []):
     if 'VirusTotal' in providers or not providers:
         search_VT = VirusTotal()

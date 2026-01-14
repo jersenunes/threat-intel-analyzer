@@ -1,6 +1,5 @@
 # type: ignore
 import time
-import requests
 from configs.settings import *
 from core.http.client import HTTPClient
 from enrichment.normalizer import parse_response

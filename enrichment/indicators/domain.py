@@ -1,6 +1,7 @@
 from enrichment.providers.virus_total import VirusTotal
 from typing import List
 
+
 def check_domain(indicators: str | List[str], providers:List = []):
     if 'VirusTotal' in providers or not providers:
         search_VT = VirusTotal()
@@ -10,6 +11,9 @@ def check_domain(indicators: str | List[str], providers:List = []):
         elif isinstance(indicators, List):
             for indicator in indicators:
                 search_VT.verify_domain(indicator=indicator)
-    
-    if 'Teste' in providers:
-        raise ValueError(f"Indicator type not supported by the specified provider.")
+        
+        else:
+            raise ValueError(f"Indicator type not supported.")
+
+    if 'AbuseIPDB' in providers:
+        raise ValueError(f"Provider type not supported.")

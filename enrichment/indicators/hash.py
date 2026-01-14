@@ -2,6 +2,7 @@
 from enrichment.providers.virus_total import VirusTotal
 from typing import List
 
+
 def check_hash(indicators: str | List[str], providers:List = []):
     if 'VirusTotal' in providers or not providers:
         search_VT = VirusTotal()
@@ -18,6 +19,6 @@ def check_hash(indicators: str | List[str], providers:List = []):
         else:
             raise ValueError(f"Indicator type not supported.")
 
-    if 'Teste' in providers:
+    if 'AbuseIPDB' in providers:
         raise ValueError(f"Provider type not supported.")
                 
