@@ -1,7 +1,7 @@
 from enrichment.providers.virus_total import VirusTotal
 from typing import List
 
-def check_domain(indicators: str | List, providers:List = []):
+def check_domain(indicators: str | List[str], providers:List = []):
     if 'VirusTotal' in providers or not providers:
         search_VT = VirusTotal()
         if isinstance(indicators, str):

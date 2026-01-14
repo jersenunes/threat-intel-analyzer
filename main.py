@@ -1,20 +1,21 @@
+import sys
 from configs.settings import *
-from enrichment.indicators.domain import check_domain
-from enrichment.indicators.file import check_file
-from enrichment.indicators.hash import check_hash
-from enrichment.indicators.ip import check_ip
-from enrichment.indicators.url import check_url
-from utils.indicator_loader import load_indicators_from_json
+from enrichment.orchestrator import orchestrator
 
 
-indicators = load_indicators_from_json("examples/indicators_input.json")
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python main.py json=examples/inputs_file.json" \
+        "Usage: python main.py ip=1.1.1.1" \
+        "Usage: python main.py domain=google.com" \
+        "Usage: python main.py url=https://www.youtube.com" \
+        "Usage: python main.py hash=23792BDD1136C3A69AD6A5BDC0914A45" \
+        "Usage: python main.py file=examples/file.pdf")
+        sys.exit(1)
 
-check_ip(indicators=indicators["ip"])
+    input_arg = sys.argv[1]
 
-check_domain(indicators=indicators["domain"])
+    orchestrator(input=input_arg)
 
-check_url(indicators=indicators["url"])
-
-check_hash(indicators=indicators["hash"])
-
-check_file(indicators=indicators["file"])
+if __name__ == "__main__":
+    main()

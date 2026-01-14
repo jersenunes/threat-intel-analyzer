@@ -16,6 +16,9 @@ def check_file(indicators: str | Path | List[Path], providers:List = []):
             for indicator in indicators:
                 path = EXAMPLES_INPUT / indicator
                 search_VT.verify_file(indicator=path)
+        
+        else:
+            raise ValueError(f"Indicator type not supported.")
 
     if 'AbuseIPDB' in providers:
-        raise ValueError(f"Indicator type not supported by the specified provider.")
+        raise ValueError(f"Provider type not supported.")

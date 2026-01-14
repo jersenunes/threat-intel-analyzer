@@ -1,6 +1,5 @@
 from utils.utils import read_a_json
 from typing import Dict, List, Any
-import os
 
 
 def load_indicators_from_json(path: str) -> Dict[str, List[Any]]:
