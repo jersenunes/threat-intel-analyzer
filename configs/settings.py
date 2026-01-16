@@ -18,10 +18,11 @@ PROVIDERS = {
     }
 USAGE_MESSAGE = "Usage: python main.py json=examples/inputs_file.json" \
                 "Usage: python main.py ip=1.1.1.1" \
-                "Usage: python main.py domain=google.com" \
-                "Usage: python main.py url=https://www.youtube.com" \
-                "Usage: python main.py hash=23792BDD1136C3A69AD6A5BDC0914A45" \
-                "Usage: python main.py file=examples/file.pdf"
+                "Usage: python main.py ip=1.1.1.1 provider=abuse" \
+                "Usage: python main.py domain=google.com provider=virustotal" \
+                "Usage: python main.py url=https://www.youtube.com provider=otx" \
+                "Usage: python main.py hash=23792BDD1136C3A69AD6A5BDC0914A45 provider=alienvault" \
+                "Usage: python main.py file=examples/file.pdf provider=vt"
 
 #Set paths
 ROOT_FOLDER = Path(__file__).parent.parent
