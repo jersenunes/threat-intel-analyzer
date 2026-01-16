@@ -1,13 +1,13 @@
 import time
 import requests
 from typing import Dict, Optional
-from .exceptions import HTTPClientError, HTTPTimeoutError, HTTPRateLimitError, HTTPServerError
+from .exceptions import HTTPClientError, HTTPTimeoutError, HTTPRateLimitError, HTTPServerError, InvalidAPIKey
 
 
 class HTTPClient:
     def __init__(self,
         headers: Dict[str, str],
-        timeout: int = 20,
+        timeout: int = 25,
         max_retries: int = 5,
         backoff_base: int = 2
     ) -> None:
@@ -43,11 +43,14 @@ class HTTPClient:
             except requests.exceptions.Timeout:
                 if attempt == self.max_retries:
                     raise HTTPTimeoutError("Request timed out")
-                time.sleep(self.backoff_base ** (attempt - 1))
+                time.sleep((self.backoff_base ** (attempt - 1)) + 10)
                 continue
 
             if response.status_code == 200:
                 return response.json()
+
+            if response.status_code == 403:
+                raise InvalidAPIKey()
 
             if response.status_code == 429:
                 if attempt == self.max_retries:
@@ -88,7 +91,7 @@ class HTTPClient:
         json: Optional[Dict] = None,
         files: Optional[Dict] = None
     ) -> Dict:
-        return self._request("POST", url, data=data, json=json, files=files)
+        return self._request("POST", url, data=data if files is None else None, json=json if files is None else None, files=files)
 
     def put(self, url: str, json: Optional[Dict] = None) -> Dict:
         return self._request("PUT", url, json=json)

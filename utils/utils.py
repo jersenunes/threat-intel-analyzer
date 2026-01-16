@@ -1,8 +1,17 @@
 # type: ignore
 import json
+import ipaddress
 from configs.settings import *
 from typing import Dict, List
 from pathlib import Path
+
+
+def get_ip_version(ip: str) -> int | None:
+    try:
+        ip_obj = ipaddress.ip_address(ip)
+        return ip_obj.version
+    except ValueError:
+        return None
 
 
 def read_file(path:Path) -> None | List | str:

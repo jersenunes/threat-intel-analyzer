@@ -37,10 +37,7 @@ class VirusTotal:
         
         endpoint_url = self.__endpoint_url_template.replace('{type}','files').replace('/{indicator}','')
         with open(indicator, "rb") as f:
-            files = {
-                "file": (indicator.name, f, "application/octet-stream")
-            }
-
+            files = {"file": (indicator.name, f, "application/octet-stream")}
             client = HTTPClient(headers=self.__headers)
             response = client.post(url=endpoint_url, files=files)
 
@@ -130,11 +127,10 @@ class VirusTotal:
         if analysis_id:
             response = None
             endpoint_url = self.__endpoint_url_template.replace('{type}','analyses').replace('{indicator}',analysis_id)
-            analysis_status = ''
 
             client = HTTPClient(headers=self.__headers)
-            for i in range(5):
-                time.sleep(20)                
+            for i in range(6):
+                time.sleep(25)                
                 response = client.get(url=endpoint_url)
                 analysis_status = response.get('data').get('attributes').get('status')
 

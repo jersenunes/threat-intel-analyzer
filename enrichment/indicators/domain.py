@@ -1,9 +1,10 @@
+from enrichment.providers.otx_alienvault import OTXAlientVault
 from enrichment.providers.virus_total import VirusTotal
 from typing import List
 
 
-def check_domain(indicators: str | List[str], providers:List = []):
-    if 'VirusTotal' in providers or not providers:
+def check_domain(indicators: str | List[str], provider: None | str):
+    if 'VirusTotal' == provider or not provider:
         search_VT = VirusTotal()
         if isinstance(indicators, str):
             search_VT.verify_domain(indicator=indicators)
@@ -15,5 +16,17 @@ def check_domain(indicators: str | List[str], providers:List = []):
         else:
             raise ValueError(f"Indicator type not supported.")
 
-    if 'AbuseIPDB' in providers:
-        raise ValueError(f"Provider type not supported.")
+    if 'OTXAlienVault' == provider or not provider:
+        search_otx = OTXAlientVault()
+        if isinstance(indicators, str):
+            search_otx.verify_domain(indicator=indicators)
+
+        elif isinstance(indicators, List):
+            for indicator in indicators:
+                search_otx.verify_domain(indicator=indicator)
+        
+        else:
+            print("Indicator type not supported.")
+
+    if 'AbuseIPDB' == provider:
+        print("Provider type not supported.")
